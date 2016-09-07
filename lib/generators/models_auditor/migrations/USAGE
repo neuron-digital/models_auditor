@@ -1,0 +1,8 @@
+Description:
+    Create migrations for your audit database
+
+Example:
+    rails generate models_auditor:migrations
+
+    This will create:
+        db/<audit_migrate_dir>/create_audit_records.rb

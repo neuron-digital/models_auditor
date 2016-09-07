@@ -1,0 +1,8 @@
+Description:
+    Create a ModelsAuditor initializer'
+
+Example:
+    rails generate models_auditor:install
+
+    This will create:
+        config/initializers/models_auditor.rb

@@ -1,0 +1,64 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+
+.full-width {
+    width: 100%;
+}
+
+.models-auditor-flex {
+    display: flex;
+}
+
+.models-auditor-column {
+    flex-direction: column;
+}
+
+.models-auditor-list {
+    display: flex;
+}
+
+.models-auditor-list .models-auditor-item {
+    display: flex;
+}
+
+.models-auditor-form-group {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.models-auditor-label {
+    flex-basis: 10%;
+    font-weight: 700;
+}
+
+.models-auditor-val {
+    flex-basis: 90%;
+    padding-left: 25px;
+    box-sizing: border-box;
+}
+
+.models-auditor-parameter {
+    display: flex;
+
+}
+
+.models-auditor-parameter .models-auditor-form-group {
+    padding-left: 25px;
+}
+
+.models-auditor-audit-record {
+    border-bottom: 1px solid #ccc;
+}

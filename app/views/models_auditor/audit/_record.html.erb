@@ -1,0 +1,39 @@
+<div class="models-auditor-item full-width models-auditor-column models-auditor-audit-record">
+  <div class="models-auditor-parameter full-width models-auditor-column">
+    <div class="models-auditor-label">Модель:</div>
+    <div class="models-auditor-form-group models-auditor-val"><%= entry.object_type %></div>
+  </div>
+  <div class="models-auditor-parameter full-width models-auditor-column">
+    <div class="models-auditor-label">ID:</div>
+    <div class="models-auditor-form-group models-auditor-val"><%= entry.object_id %></div>
+  </div>
+  <div class="models-auditor-parameter full-width models-auditor-column">
+    <div class="models-auditor-label">Request:</div>
+    <div class="models-auditor-form-group models-auditor-val"><a href="<%= models_auditor_request_path(id: entry.request_id) %>">#<%= entry.request_id %></a></div>
+  </div>
+  <div class="models-auditor-parameter full-width models-auditor-column">
+    <div class="models-auditor-label">Действие:</div>
+    <div class="models-auditor-form-group models-auditor-val">
+      <% case entry.read_attribute(:action) %>
+        <% when ModelsAuditor::AuditRecord::ACTION_CREATE %>
+          Создание
+        <% when ModelsAuditor::AuditRecord::ACTION_UPDATE %>
+          Внесение изменений
+        <% when ModelsAuditor::AuditRecord::ACTION_DESTROY %>
+          Удаление
+      <% end %>
+    </div>
+  </div>
+  <div class="models-auditor-parameter full-width models-auditor-column">
+    <div class="models-auditor-label">Изменения:</div>
+    <div class="models-auditor-form-group models-auditor-val models-auditor-column">
+      <% (entry.content || {}).each do |key, val| %>
+        <div class="models-auditor-form-group">
+          <div class="models-auditor-label"><%= key %></div>
+          <div class="models-auditor-val"><%= val %></div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,25 @@
+<div class="models-auditor-item full-width models-auditor-column">
+  <div class="models-auditor-parameter full-width models-auditor-column">
+    <div class="models-auditor-label">Параметры запроса:</div>
+    <% (entry.request_info || {}).each do |key, val| %>
+      <div class="models-auditor-form-group">
+        <div class="models-auditor-label"><%= key %></div>
+        <div class="models-auditor-val"><%= val %></div>
+      </div>
+    <% end %>
+  </div>
+  <div class="models-auditor-parameter full-width models-auditor-column">
+    <div class="models-auditor-label">ID Ответственного:</div>
+    <div class="models-auditor-form-group"><%= entry.user_id %></div>
+  </div>
+  <div class="models-auditor-parameter full-width models-auditor-column">
+    <div class="models-auditor-label">Модели:</div>
+    <div class="models-auditor-form-group">
+      <div class="models-auditor-list models-auditor-column full-width">
+        <% (entry.records || []).each do |record| %>
+          <%= render partial: 'record', object: record, as: :entry %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

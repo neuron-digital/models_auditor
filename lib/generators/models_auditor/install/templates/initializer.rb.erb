@@ -1,0 +1,13 @@
+# Настройки аудитора моделей
+
+ModelsAuditor.configure do |config|
+<%
+  (ModelsAuditor::Config::CONFIG_OPTIONS).each do |option_sym|
+    descr = descriptions[option_sym.to_s].try(:split, "\n").try(:join, "\n  # ")
+    concat "  # #{descr.force_encoding('ASCII-8BIT')}\n" if descr.present?
+    concat "  # config.#{option_sym} = "
+    concat (ModelsAuditor.config.default[option_sym].try(:[], :config) || 'nil').force_encoding('ASCII-8BIT')
+    concat "\n\n"
+  end
+%>
+end

@@ -1,0 +1,12 @@
+class CreateAuditRequestsN<%= @migration_postfix %> < ActiveRecord::Migration
+  def change
+    <% audit_tbn = ModelsAuditor.config.audit_requests_table_name %>
+    create_table :<%= audit_tbn %>, comment: 'Журнал изменений данных в моделях' do |t|
+      t.integer   :user_id,       null: true,   unsigned: true,             comment: 'id ответственного'
+      t.json      :request_info,  null: false,  default: {},                comment: 'Информация о запросе'
+      t.datetime  :created_at,    null: false,                              comment: 'дата и время запроса'
+    end
+    add_index :<%= audit_tbn %>, :id
+    add_index :<%= audit_tbn %>, :created_at
+  end
+end

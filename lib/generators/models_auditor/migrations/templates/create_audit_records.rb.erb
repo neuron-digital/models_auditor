@@ -1,0 +1,18 @@
+class CreateAuditRecordsN<%= @migration_postfix %> < ActiveRecord::Migration
+  def change
+    <% audit_tbn = ModelsAuditor.config.audit_records_table_name %>
+    create_table :<%= audit_tbn %>, comment: 'Журнал изменений данных в моделях' do |t|
+      t.integer   :request_id,    null: true,   unsigned: true, comment: 'зафиксированные изменения'
+      t.integer   :action,        null: false,  unsigned: true, comment: 'действие'
+      t.json      :content,       null: false,  default: {},    comment: 'зафиксированные изменения'
+      t.string    :object_type,   null: false,                  comment: 'класс логируемого объекта'
+      t.integer   :object_id,     null: false,  unsigned: true, comment: 'id логируемого объекта'
+      t.json      :bridge,        null: true,                   comment: 'данные внешних ключей связующей таблицы'
+      t.datetime  :created_at,    null: false,                  comment: 'дата и время зафиксированных изменений'
+    end
+    add_index :<%= audit_tbn %>, :id
+    add_index :<%= audit_tbn %>, :request_id
+    add_index :<%= audit_tbn %>, :created_at
+    add_index :<%= audit_tbn %>, [:object_id, :object_type]
+  end
+end

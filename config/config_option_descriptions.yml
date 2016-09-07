@@ -1,0 +1,23 @@
+audit_enabled:                Включение/Отключение аудита всех моделей
+connection_namespace:         Namespace для конфига базы данных
+audit_migrations_dir:         Папка для хранения миграций аудитора
+audit_records_table_name:     Название таблицы для хрянения логов
+audit_requests_table_name:    Название таблицы для хранения информации о запросах, приведших к изменению данных
+audit_request_changes_only:   |-
+                              true:   Логировать только изменения, производимые через Request
+                              false:  Логировать любые изменения
+logger:                       |-
+                              Может принимать объект класса Logger или false
+                              Пример:
+                                config.logger = false
+                                или
+                                config.logger = Logger.new(Rails.root.join('log', 'models_auditor.log'))
+records_per_page:             Количество залогированных записей об изменениях в моделях на страницу
+fake_total_count:             Не настоящее значение total_count записей в логах
+audit_controller_base:        |-
+                              Базовый класс audit контроллера
+                              Пример: config.audit_controller_base = '::ApplicationController'
+respond_to_json_enabled:      Доступ к логам через json api
+respond_to_html_enabled:      Доступ к логам через html
+json_response_data_key:       Ключ с залогированными данными в json ответе
+json_response_meta_key:       Ключ с meta информацией в json ответе

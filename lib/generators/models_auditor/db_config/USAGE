@@ -1,0 +1,7 @@
+Description:
+    Append audit database config
+
+Example:
+    rails generate models_auditor:db_config
+
+    This will append audit database config to database.yml
