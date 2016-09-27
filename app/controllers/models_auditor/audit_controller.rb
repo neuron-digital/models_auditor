@@ -14,6 +14,8 @@ module ModelsAuditor
         ModelsAuditor::AuditRequest.includes(:records).all
           .paginate(paginate_info)
 
+      @collection = apply_filters(@collection, params[:filters])
+
       respond_to do |f|
         if ModelsAuditor.config.respond_to_json_enabled
           f.json {
@@ -34,6 +36,43 @@ module ModelsAuditor
     end
 
     private
+
+    def apply_filters(collection, filters)
+      return collection if filters.blank? || collection.nil?
+      if filters[:since_at].present? && (time = (Time.parse(filters[:since_at]) rescue nil)).present?
+        collection =
+          collection
+            .where(ModelsAuditor::AuditRecord.arel_table[:created_at].gteq(time))
+            .references(ModelsAuditor::AuditRecord.table_name.to_sym)
+      end
+      if filters[:before_at].present? && (time = (Time.parse(filters[:before_at]) rescue nil)).present?
+        collection =
+          collection
+            .where(ModelsAuditor::AuditRecord.arel_table[:created_at].lteq(time))
+            .references(ModelsAuditor::AuditRecord.table_name.to_sym)
+      end
+      if filters[:action].present?
+        collection = collection.where(ModelsAuditor::AuditRecord.arel_table[:action].eq(ModelsAuditor::AuditRecord.actions[filters[:action]])).references(ModelsAuditor::AuditRecord.table_name.to_sym)
+
+      end
+      if filters[:user_id].present?
+        collection = collection.where(user_id: filters[:user_id])
+      end
+      if filters[:object].present?
+        cond = {}
+        if (object_id = filters[:object][:id].to_i) > 0
+          cond[:object_id] = object_id
+        end
+        if (object_type = filters[:object][:type]).present?
+          cond[:object_type] = object_type
+        end
+
+        filtered_requests = collection.where(ModelsAuditor::AuditRecord.table_name.to_sym => cond).pluck(:id)
+        collection        = collection.where(id: filtered_requests)
+      end
+
+      collection
+    end
 
     def get_relations(record, records)
       rel_records = records.select { |r| !r.bridge.nil? && r.bridge.keys.include?(record.object_type) }
