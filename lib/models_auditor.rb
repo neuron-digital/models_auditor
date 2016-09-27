@@ -1,5 +1,4 @@
 require 'request_store'
-require 'json_api'
 require 'models_auditor/engine'
 require 'models_auditor/config'
 require 'models_auditor/audit'

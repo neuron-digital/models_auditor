@@ -12,6 +12,7 @@ module ModelsAuditor
 
       @collection =
         ModelsAuditor::AuditRequest.includes(:records).all
+          .order(created_at: :desc)
           .paginate(paginate_info)
 
       @collection = apply_filters(@collection, params[:filters])

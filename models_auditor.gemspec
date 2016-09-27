@@ -20,7 +20,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'rails', '~> 4.0'
   s.add_dependency 'pg', '~> 0.18.4'
   s.add_dependency 'request_store', '~> 1.3.1'
-  s.add_dependency 'simple-json-api-serializer', '~> 1.0.8'
 
   s.add_development_dependency 'pry'
   s.add_development_dependency 'pry-nav'
