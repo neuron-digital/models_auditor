@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.version     = ModelsAuditor::VERSION
   s.authors     = ['Alexander Gorbunov']
   s.email       = ['lexgorbunov@gmail.com']
-  s.homepage    = 'https://github.com/lexgorbunov/models_auditor'
+  s.homepage    = 'https://github.com/Go-Promo/models_auditor'
   s.summary     = 'ModelsAuditor is an ORM extension that logs all changes to your models.'
   s.description = 'ModelsAuditor is an ORM extension that logs all changes to your models. Audited also allows you to record who made those changes, save associate models related to the changes.'
   s.license     = 'MIT'

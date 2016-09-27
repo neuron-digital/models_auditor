@@ -9,7 +9,7 @@ namespace :db do
       raise ArgumentError.new('Required parameter [<database>] was not passed') if db.blank?
 
       connection_params =
-        ActiveRecord::Base.configurations[db].merge(
+        ActiveRecord::Base.configurations[db.to_s].merge(
           'database'           => 'postgres',
           'schema_search_path' => 'public'
         )
@@ -20,7 +20,7 @@ namespace :db do
       db = args.database || [ModelsAuditor.config.connection_namespace, Rails.env].map(&:presence).compact.join('_').to_sym
       raise ArgumentError.new('Required parameter [<database>] was not passed') if db.blank?
 
-      connection_params = ActiveRecord::Base.configurations[db]
+      connection_params = ActiveRecord::Base.configurations[db.to_s]
       ActiveRecord::Base.establish_connection(connection_params)
     end
 
@@ -28,7 +28,7 @@ namespace :db do
     task :create, [:database] => [:connect_without_db, :environment] do |t, args|
       db = args.database || [ModelsAuditor.config.connection_namespace, Rails.env].map(&:presence).compact.join('_').to_sym
       raise ArgumentError.new('Required parameter [<database>] was not passed') if db.blank?
-      database_name = ActiveRecord::Base.configurations[db]['database']
+      database_name = ActiveRecord::Base.configurations[db.to_s]['database']
 
       puts "Applying create on #{db}"
       ActiveRecord::Base.connection.create_database(database_name)
@@ -38,7 +38,7 @@ namespace :db do
     task :drop, [:database] => [:connect_without_db, :environment] do |t, args|
       db = args.database || [ModelsAuditor.config.connection_namespace, Rails.env].map(&:presence).compact.join('_').to_sym
       raise ArgumentError.new('Required parameter [<database>] was not passed') if db.blank?
-      database_name = ActiveRecord::Base.configurations[db]['database']
+      database_name = ActiveRecord::Base.configurations[db.to_s]['database']
 
       # Дропаем существующие подключения
       # и запрещаем новые на время пересоздания базы
