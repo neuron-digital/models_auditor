@@ -85,7 +85,7 @@ module ModelsAuditor
                 ModelsAuditor.log_error(record.errors.full_messages)
               end
             end
-          rescue Exception => e
+          rescue StandardError => e
             ModelsAuditor.log_error("Couldn't logged changes of #{self.class.name} id: #{self.try(:id)}")
             ModelsAuditor.log_error(e.message)
             ModelsAuditor.log_error(e.backtrace.take(100).join("\n"))

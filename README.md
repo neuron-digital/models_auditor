@@ -108,5 +108,22 @@ If you want to use a database prefix not from config. You may specify it as an a
 
 `rake db:audit:create[audit_shmaudit]`
 
+## Capistrano
+
+Add line to the Capfile
+
+`require 'models_auditor/capistrano/rails/audit_migrations'`
+
+**Migrate**
+
+The capistrano migrate task
+
+`cap deploy:audit_migrate`
+
+will be executed automatically after `deploy:migrate` cap task 
+
+**Rollback**
+
+`cap deploy:audit_rollback`
 
 This project rocks and uses MIT-LICENSE.
