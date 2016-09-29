@@ -76,12 +76,32 @@ module ModelsAuditor
     end
 
     def get_relations(record, records)
-      rel_records = records.select { |r| !r.bridge.nil? && r.bridge.keys.include?(record.object_type) }
+      rel_records = records.select do |r|
+        !r.bridge.nil? && r.bridge.any? do |_, v|
+          v_type, v_id = v.to_a[0]
+          v_type.to_s == record.object_type && v_id.to_i == record.object_id.to_i
+        end
+      end
       rel_records.map do |i|
-        target_class = i.bridge.except(record.object_type).keys.first
-        next unless target_class
-        i.attributes.slice('id', 'object_type', 'object_id').merge(target: {target_class => i.bridge[target_class].values.first})
+        target_info = except_target_class(i.bridge, record.object_type, record.object_id)
+        next if target_info.empty?
+        t_key, klass_with_id = target_info.to_a[0]
+        target_klass, target_id = klass_with_id.to_a[0]
+        i.attributes.slice('id', 'object_type', 'object_id').merge(target: {
+          class: target_klass,
+          foreign_key: t_key,
+          foreign_id: target_id,
+        })
       end.compact
+    end
+
+    # @return [Array]
+    def except_target_class(bridge, target_class, target_id)
+      target_id = target_id.to_i
+      bridge.select do |_, v|
+        klass, id = v.to_a[0]
+        !(klass.to_s == target_class.to_s && id.to_i == target_id.to_i)
+      end
     end
 
     # @param [ActiveRecord::Relation|ModelsAuditor::AuditRequest|Array] data

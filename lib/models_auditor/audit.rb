@@ -50,7 +50,7 @@ module ModelsAuditor
 
         bridge =
           if options[:bridge]
-            options[:bridge].each_with_object({}) { |(model_name, key), o| o[model_name] = {key => __send__(key)} }
+            options[:bridge].each_with_object({}) { |(key, model_name), o| o[key] = {model_name => __send__(key)} }
           end
 
         Thread.new do

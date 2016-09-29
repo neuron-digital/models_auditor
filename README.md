@@ -76,11 +76,11 @@
     
 3. Add to each association models
     
-    `enable_audit ModelsAuditor::Audit::AUDIT_MODE_JSON, bridge: {Author.name => :author_id, Post.name => :post_id}`
+    `enable_audit ModelsAuditor::Audit::AUDIT_MODE_JSON, bridge: {author_id: Author.name, post_id: Post.name}`
     
     ```ruby
     class AuthorsPost < ActiveRecord::Base
-      enable_audit ModelsAuditor::Audit::AUDIT_MODE_JSON, bridge: {Author.name => :author_id, Post.name => :post_id}
+      enable_audit ModelsAuditor::Audit::AUDIT_MODE_JSON, bridge: {author_id: Author.name, post_id: Post.name}
     end
     ``` 
 
