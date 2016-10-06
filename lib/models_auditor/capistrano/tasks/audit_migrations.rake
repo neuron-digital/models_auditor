@@ -3,15 +3,10 @@ namespace :deploy do
   desc 'Runs rake db:audit:migrate if migrations are set'
   task :audit_migrate do
     on primary fetch(:migration_role) do
-      info '[deploy:audit_migrate] Checking changes in /db/audit_migrate'
-      if test("diff -q #{release_path}/db/audit_migrate #{current_path}/db/audit_migrate")
-        info '[deploy:audit_migrate] Skip `deploy:audit_migrate` (nothing changed in db/audit_migrate)'
-      else
-        info '[deploy:audit_migrate] Run `rake db:audit:migrate`'
-        within release_path do
-          with rails_env: fetch(:rails_env) do
-            execute :rake, 'db:audit:migrate'
-          end
+      info '[deploy:audit_migrate] Run `rake db:audit:migrate`'
+      within release_path do
+        with rails_env: fetch(:rails_env) do
+          execute :rake, 'db:audit:migrate'
         end
       end
     end
