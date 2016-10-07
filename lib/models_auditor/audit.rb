@@ -90,8 +90,7 @@ module ModelsAuditor
             ModelsAuditor.log_error(e.message)
             ModelsAuditor.log_error(e.backtrace.take(100).join("\n"))
           end
-        # TODO To remove the #join call from the thread block after debugging
-        end.join
+        end
       end
 
       private

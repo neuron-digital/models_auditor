@@ -24,7 +24,7 @@ module ModelsAuditor
     def default
       @default ||= {
         audit_enabled:              {
-          config: 'true',
+          config: '%w(staging production).include?(Rails.env)',
           val:    true
         },
         connection_namespace:       {

@@ -3,8 +3,12 @@ module ModelsAuditor
     ACTION_CREATE  = 0
     ACTION_UPDATE  = 1
     ACTION_DESTROY = 2
+    begin
+      establish_connection [ModelsAuditor.config.connection_namespace, Rails.env].map(&:presence).compact.join('_').to_sym
+    rescue StandardError
+      # ignored
+    end
 
-    establish_connection [ModelsAuditor.config.connection_namespace, Rails.env].map(&:presence).compact.join('_').to_sym
     self.table_name = ModelsAuditor.config.audit_records_table_name
 
     belongs_to :request, class_name: ModelsAuditor::AuditRequest.name, foreign_key: :request_id

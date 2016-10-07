@@ -12,6 +12,8 @@ module ModelsAuditor
           user_id:      user_for_models_auditor,
           request_info: info_for_models_auditor
         )
+    rescue StandardError
+      # ignored
     end
 
     # Returns the user who is responsible for any changes that occur.
