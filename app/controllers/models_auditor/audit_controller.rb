@@ -12,7 +12,7 @@ module ModelsAuditor
 
       @collection =
         ModelsAuditor::AuditRequest.includes(:records).all
-          .order(created_at: :desc)
+          .order("#{ModelsAuditor::AuditRequest.table_name}.created_at DESC")
           .paginate(paginate_info)
 
       @collection = apply_filters(@collection, params[:filters])
@@ -40,21 +40,23 @@ module ModelsAuditor
 
     def apply_filters(collection, filters)
       return collection if filters.blank? || collection.nil?
+      original = collection
       if filters[:since_at].present? && (time = (Time.parse(filters[:since_at]) rescue nil)).present?
         collection =
           collection
+            .includes(:records)
             .where(ModelsAuditor::AuditRecord.arel_table[:created_at].gteq(time))
             .references(ModelsAuditor::AuditRecord.table_name.to_sym)
       end
       if filters[:before_at].present? && (time = (Time.parse(filters[:before_at]) rescue nil)).present?
         collection =
           collection
+            .includes(:records)
             .where(ModelsAuditor::AuditRecord.arel_table[:created_at].lteq(time))
             .references(ModelsAuditor::AuditRecord.table_name.to_sym)
       end
       if filters[:action].present?
-        collection = collection.where(ModelsAuditor::AuditRecord.arel_table[:action].eq(ModelsAuditor::AuditRecord.actions[filters[:action]])).references(ModelsAuditor::AuditRecord.table_name.to_sym)
-
+        collection = collection.includes(:records).where(ModelsAuditor::AuditRecord.arel_table[:action].eq(ModelsAuditor::AuditRecord.actions[filters[:action]])).references(ModelsAuditor::AuditRecord.table_name.to_sym)
       end
       if filters[:user_id].present?
         collection = collection.where(user_id: filters[:user_id])
@@ -68,11 +70,11 @@ module ModelsAuditor
           cond[:object_type] = object_type
         end
 
-        filtered_requests = collection.where(ModelsAuditor::AuditRecord.table_name.to_sym => cond).pluck(:id)
-        collection        = collection.where(id: filtered_requests)
+        collection = collection.includes(:records).where(ModelsAuditor::AuditRecord.table_name.to_sym => cond)
       end
 
-      collection
+      filtered_requests = collection.pluck(:id)
+      original.where(id: filtered_requests)
     end
 
     def get_relations(record, records)
