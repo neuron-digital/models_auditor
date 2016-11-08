@@ -58,7 +58,8 @@ module ModelsAuditor
         ip:         request.remote_ip,
         user_agent: request.user_agent,
         controller: self.class.name,
-        action:     action_name
+        action:     action_name,
+        path:       request.path_info
       }
     end
   end
