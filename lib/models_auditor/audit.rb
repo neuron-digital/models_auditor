@@ -21,18 +21,49 @@ module ModelsAuditor
     end
 
     module InstanceMethods
+      def is_audit_enabled?
+        self.class.instance_variable_get(:@audit_enabled) ||
+          (self.class.column_names.include?(self.class.inheritance_column) &&
+            self.class.superclass.instance_variable_get(:@audit_enabled))
+      end
+
+      def get_audit_mode
+        mode = self.class.instance_variable_get(:@audit_mode)
+        if mode.nil?
+          self.class.column_names.include?(self.class.inheritance_column) &&
+            self.class.superclass.instance_variable_get(:@audit_enabled) ?
+            self.class.superclass.instance_variable_get(:@audit_mode) :
+            nil
+        else
+          mode
+        end
+      end
+
+      def get_audit_options
+        settings = self.class.instance_variable_get(:@audit_settings)
+        if settings.nil?
+          self.class.column_names.include?(self.class.inheritance_column) &&
+            self.class.superclass.instance_variable_get(:@audit_enabled) ?
+            self.class.superclass.instance_variable_get(:@audit_settings) :
+            {}
+        else
+          settings
+        end
+      end
+
       def do_audit_init_snapshot
         return unless ModelsAuditor.config.audit_enabled
-        mode = self.class.instance_variable_get(:@audit_mode)
-        return unless self.class.instance_variable_get(:@audit_enabled) && AUDIT_SNAPSHOT_MODES.include?(mode)
+        return unless is_audit_enabled?
+        mode = get_audit_mode
+        return unless AUDIT_SNAPSHOT_MODES.include?(mode)
         ma_store_initial_state(ModelsAuditor.store)
       end
 
       def do_audit_process
         return unless ModelsAuditor.config.audit_enabled
-        return unless self.class.instance_variable_get(:@audit_enabled)
-        mode    = self.class.instance_variable_get(:@audit_mode)
-        options = self.class.instance_variable_get(:@audit_settings) || {}
+        return unless is_audit_enabled?
+        mode    = get_audit_mode
+        options = get_audit_options
         store   = ModelsAuditor.store
 
         initial_data = ma_get_initial_state(store)
@@ -135,9 +166,9 @@ module ModelsAuditor
 
       # Получает сериализованные данные для аудита
       def ma_auditor_get_data
-        options      = self.class.instance_variable_get(:@audit_settings) || {}
+        options      = get_audit_options
         audit_params = options[:params]
-        mode         = self.class.instance_variable_get(:@audit_mode)
+        mode         = get_audit_mode
         case mode
           when AUDIT_MODE_JSON
             self.as_json(audit_params)
@@ -157,7 +188,7 @@ module ModelsAuditor
           when AUDIT_MODE_CHANGES_ONLY
             self.previous_changes
           else
-            raise ArgumentError.new('Incorrect value of argument audit_type')
+            raise ArgumentError.new("Incorrect value of argument audit_type #{mode}")
         end
       end
     end
