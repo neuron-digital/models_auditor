@@ -87,33 +87,36 @@ module ModelsAuditor
         Thread.new do
           begin
             log_anyway = !ModelsAuditor.config.audit_request_changes_only
-            if (request = store[:audit_request]) || log_anyway
-              body =
-                case
-                  when AUDIT_SNAPSHOT_MODES.include?(mode)
-                    ma_eliminate_not_changed_keys(initial_data, current_data)
-                  when AUDIT_CHANGES_MODES.include?(mode)
-                    current_data
-                  else
-                    raise ArgumentError.new('Incorrect value of argument audit_type')
-                end
+            if store[:audit_request] || log_anyway
+              (store[:audit_mutex] ||= Mutex.new).synchronize do
+                request = store[:audit_request]
+                body =
+                  case
+                    when AUDIT_SNAPSHOT_MODES.include?(mode)
+                      ma_eliminate_not_changed_keys(initial_data, current_data)
+                    when AUDIT_CHANGES_MODES.include?(mode)
+                      current_data
+                    else
+                      raise ArgumentError.new('Incorrect value of argument audit_type')
+                  end
 
-              if request.try(:new_record?) && !request.save
-                ModelsAuditor.log_error("Couldn't save request record")
-                ModelsAuditor.log_error(request.errors.full_messages)
-                return
-              end
-              record =
-                ModelsAuditor::AuditRecord.new(
-                  request:   request,
-                  auditable: self,
-                  content:   body,
-                  action:    action,
-                  bridge:    bridge
-                )
-              unless record.save
-                ModelsAuditor.log_error("Couldn't logged changes of #{self.class.name} id: #{self.try(:id)}")
-                ModelsAuditor.log_error(record.errors.full_messages)
+                if request.try(:new_record?) && !request.save
+                  ModelsAuditor.log_error("Couldn't save request record")
+                  ModelsAuditor.log_error(request.errors.full_messages)
+                  return
+                end
+                record =
+                  ModelsAuditor::AuditRecord.new(
+                    request:   request,
+                    auditable: self,
+                    content:   body,
+                    action:    action,
+                    bridge:    bridge
+                  )
+                unless record.save
+                  ModelsAuditor.log_error("Couldn't logged changes of #{self.class.name} id: #{self.try(:id)}")
+                  ModelsAuditor.log_error(record.errors.full_messages)
+                end
               end
             end
           rescue StandardError => e
