@@ -33,6 +33,15 @@
 6. **Apply migrations to the audit database**
 
     `rake db:audit:migrate`
+    
+7. **Add to sidekiq config config/sidekiq.yml**
+    
+    ```yaml
+    ...
+    :queues:
+      ...
+      - models_auditor
+    ```
 
 ## Usages
 

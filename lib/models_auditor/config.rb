@@ -6,7 +6,6 @@ module ModelsAuditor
       audit_records_table_name
       audit_requests_table_name
       audit_migrations_dir
-      audit_request_changes_only
       logger
       records_per_page
       fake_total_count
@@ -46,10 +45,6 @@ module ModelsAuditor
         logger:                     {
           config: "Logger.new(Rails.root.join('log', 'models_auditor.log'))",
           val:    Logger.new(Rails.root.join('log', 'models_auditor.log'))
-        },
-        audit_request_changes_only: {
-          config: 'true',
-          val:    true
         },
         records_per_page:           {
           config: '10',

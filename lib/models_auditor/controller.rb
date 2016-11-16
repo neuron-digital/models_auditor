@@ -1,19 +1,26 @@
 module ModelsAuditor
   module Controller
     def self.included(base)
-      base.before_action :set_models_auditor_request_params
+      base.around_action :set_models_auditor_request_params
     end
 
     protected
 
     def set_models_auditor_request_params
-      ModelsAuditor.store[:audit_request] =
-        ModelsAuditor::AuditRequest.new(
+      if ModelsAuditor.config.audit_enabled
+        ModelsAuditor.store[:audit_request_data] = {
           user_id:      user_for_models_auditor,
-          request_info: info_for_models_auditor
-        )
-    rescue StandardError
-      # ignored
+          request_info: info_for_models_auditor,
+          records_attributes: []
+        }
+
+        yield
+
+        ModelsAuditor::ModelsAuditorWorker.perform_async(ModelsAuditor.store[:audit_request_data].to_json)
+      end
+    rescue StandardError => e
+      ModelsAuditor.log_error(e.message)
+      ModelsAuditor.log_error(e.backtrace.take(100).join("\n"))
     end
 
     # Returns the user who is responsible for any changes that occur.
