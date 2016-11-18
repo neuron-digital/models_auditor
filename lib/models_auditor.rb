@@ -1,6 +1,7 @@
 require 'request_store'
 require 'models_auditor/engine'
 require 'models_auditor/config'
+require 'models_auditor/default_formatter'
 require 'models_auditor/audit'
 require 'models_auditor/controller'
 

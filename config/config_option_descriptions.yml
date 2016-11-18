@@ -18,3 +18,4 @@ respond_to_json_enabled:      Доступ к логам через json api
 respond_to_html_enabled:      Доступ к логам через html
 json_response_data_key:       Ключ с залогированными данными в json ответе
 json_response_meta_key:       Ключ с meta информацией в json ответе
+log_output_formatter:         Класс форматирующий данные логов перед выдачей

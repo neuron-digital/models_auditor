@@ -16,11 +16,17 @@ module ModelsAuditor
 
         yield
 
-        ModelsAuditor::ModelsAuditorWorker.perform_async(ModelsAuditor.store[:audit_request_data].to_json)
+        if ModelsAuditor.store[:audit_request_data][:records_attributes].present?
+          begin
+            ModelsAuditor::ModelsAuditorWorker.perform_async(ModelsAuditor.store[:audit_request_data].to_json)
+          rescue StandardError => e
+            ModelsAuditor.log_error(e.message)
+            ModelsAuditor.log_error(e.backtrace.take(100).join("\n"))
+          end
+        end
+      else
+        yield
       end
-    rescue StandardError => e
-      ModelsAuditor.log_error(e.message)
-      ModelsAuditor.log_error(e.backtrace.take(100).join("\n"))
     end
 
     # Returns the user who is responsible for any changes that occur.

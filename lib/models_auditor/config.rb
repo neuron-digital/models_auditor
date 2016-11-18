@@ -14,6 +14,7 @@ module ModelsAuditor
       respond_to_html_enabled
       json_response_data_key
       json_response_meta_key
+      log_output_formatter
     )
 
     def initialize
@@ -73,6 +74,10 @@ module ModelsAuditor
         json_response_meta_key:     {
           config: "'meta'",
           val:    'meta'
+        },
+        log_output_formatter:     {
+          config: "'ModelsAuditor::DefaultFormatter'",
+          val:    'ModelsAuditor::DefaultFormatter'
         },
       }
     end
