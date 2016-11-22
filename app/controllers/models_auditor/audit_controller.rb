@@ -25,9 +25,9 @@ module ModelsAuditor
             render json: {
               ModelsAuditor.config.json_response_data_key => formatter.as_json,
               ModelsAuditor.config.json_response_meta_key => {
-                per_page: @collection.per_page,
-                total: @collection.total_entries,
-                sort_by: @collection.order_info
+                per_page: paginate_info[:per_page]      || @collection.per_page,
+                total:    paginate_info[:total_entries] || @collection.total_entries,
+                sort_by:  @collection.order_info
               }
             }
           }
@@ -76,7 +76,9 @@ module ModelsAuditor
       end
 
       filtered_requests = collection.pluck(:id)
-      original.where(id: filtered_requests)
+      original
+        .paginate(page: 1, per_page: original.per_page, total_entries: original.total_entries)
+        .where(id: filtered_requests)
     end
 
   end
